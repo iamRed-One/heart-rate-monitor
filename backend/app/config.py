@@ -22,5 +22,5 @@ class DatabaseSettings(BaseSettings):
     postgres_user: str = Field(default="heart_rate", min_length=1)
     postgres_password: SecretStr = Field(min_length=1)
     postgres_db: str = Field(default="heart_rate_monitor", min_length=1)
-    allowed_origins: str = "http://127.0.0.1:8000,http://localhost:8000"
+    allowed_origins: str = "http://127.0.0.1:8000,http://localhost:8000,http://127.0.0.1:5173,http://localhost:5173"
     cookie_secure: bool = False

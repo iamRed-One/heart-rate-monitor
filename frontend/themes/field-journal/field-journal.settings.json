@@ -1,0 +1,19 @@
+{
+  "name": "field-journal",
+  "like": "neutral",
+  "mode": "both",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#245744",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "Manrope Variable",
+      "source": "dial"
+    }
+  ],
+  "lifted": [],
+  "palette": "2e85d3c9601646f24828f1c1e0ff6f1c9a21b683c044617c1472e9ccece85e3c"
+}
