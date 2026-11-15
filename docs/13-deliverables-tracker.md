@@ -10,9 +10,9 @@
 | 2 | Draft SRS (Sections 1-3), user stories | 8 | [SRS and stories](03-srs-and-user-stories.md) | Validate with stakeholders/lecturer; record feedback |
 | 3 | Backlog, schedule, risk register, estimate | 6 | [Project plan](04-project-plan.md) | Confirm availability/course dates; update actuals |
 | 4 | UML model set | 8 | [UML](05-uml-models.md) | Review and render diagrams; convert to formal UML tooling if required |
-| 5 | Architecture document, ERD, schema script | 8 | [Architecture/database](06-architecture-and-database.md) | Review design; executable schema script/migration is not yet written |
+| 5 | Architecture document, ERD, schema script | 8 | [Architecture/database](06-architecture-and-database.md), [migration](../backend/migrations/versions/0001_initial_create_account_and_recording_schema.py), [schema SQL](../backend/migrations/schema.sql) | Initial schema applied locally; review complete architecture against later increments |
 | 6 | Design-patterns note, wireframes | 6 | [UI/patterns](07-ui-and-design-patterns.md) | Validate screens; apply two patterns and SOLID module in code later |
-| 7 | Working module 1, Git history | 6 | [Implementation plan](08-implementation-and-api-plan.md) | Implement core module; capture real branches/commits/PRs |
+| 7 | Working module 1, Git history | 6 | [Implementation plan](08-implementation-and-api-plan.md), [auth module](15-authentication.md) | Auth module verified locally; CSV core flow and corresponding Git/PR evidence remain pending |
 | 8 | Live demo, progress report | 10 | [Evidence templates](12-evidence-and-report-templates.md) | Run working prototype demo; record progress/feedback and revise backlog |
 | 9 | Modules 2+, review log, static-analysis report | 6 | [Plan](08-implementation-and-api-plan.md), [templates](12-evidence-and-report-templates.md) | Implement remaining modules; real peer review, refactoring and analysis |
 | 10 | Test plan, test cases, coverage report, defect log | 8 | [Test plan/cases](09-test-plan.md), [templates](12-evidence-and-report-templates.md) | Execute tests; record coverage and defects; target at least 60% |
