@@ -36,7 +36,7 @@ Use http://127.0.0.1:8000/docs to register and log in. The browser stores the Ht
 
 Raw session tokens are never stored in PostgreSQL. Only SHA-256 digests are stored; CSRF tokens are derived from the raw session token and their digests are checked with constant-time comparison. Passwords use Argon2id via argon2-cffi. Logging in again rotates the browser's existing session, and logout invalidates it server-side. Cookie defaults are HttpOnly and SameSite=Lax. `COOKIE_SECURE=false` is for local HTTP only; HTTPS deployment requires true.
 
-Persistent throttling permits five failed logins per account/IP in 15 minutes and ten registration requests per IP in ten minutes. Database advisory locks coordinate counters between API workers. Successful login resets its failure counter. Requests rejected before credential validation do not consume those counters. Counter cleanup and a general HTTP/IP abuse limiter are future operating work; do not present these targeted counters as complete denial-of-service protection. No password-reset or email-verification flow is included yet.
+Persistent throttling permits five failed logins per account/IP in 15 minutes and ten registration requests per IP in ten minutes. Database advisory locks coordinate counters between API workers. Successful login resets its failure counter. Requests rejected before credential validation do not consume those counters. The later CSV maintenance task removes old counters and expired sessions. A general HTTP/IP abuse limiter remains future operating work; these targeted counters are not complete denial-of-service protection. No password-reset or email-verification flow is included yet.
 
 ## Schema decisions
 

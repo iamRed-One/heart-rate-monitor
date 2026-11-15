@@ -55,7 +55,7 @@ The import parser interface separates canonical parsing from database transactio
 
 Tests run against the explicitly separate `_test` PostgreSQL database. Parser tests cover formats, UTC equivalence, input bounds and row limits. Integration tests cover preview/confirm/history, invalid input, CSRF, foreign ownership, expiry/cap/discard, cleanup, transaction rollback and concurrent duplicates. Test-client lifespans disable the production maintenance task; explicit cleanup tests use only the isolated test session.
 
-This increment provides basic history and per-recording summaries. Date-filtered reading endpoints, chart aggregation, rename/delete recording UI and React screens are still pending. No live wearable acquisition or arbitrary vendor CSV mapping is included.
+This increment provides basic history and per-recording summaries. The subsequent [dashboard increment](17-dashboard-api.md) adds date-filtered readings, chart aggregation and rename/delete APIs. React screens remain pending. No live wearable acquisition or arbitrary vendor CSV mapping is included.
 
 Local verification on 2026-11-15: **30 tests passed** in 9.108 seconds, covering both auth and import increments. Ruff lint/format checks passed, locked offline dependency sync succeeded and Alembic found no schema drift. Live `/ready` returned HTTP 200, and `/openapi.json` exposed all five import/history routes. No coverage percentage or peer review is claimed.
 

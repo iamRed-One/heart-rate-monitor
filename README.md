@@ -5,7 +5,7 @@
 
 A planned web application for importing recorded wearable heart-rate data, exploring charts and viewing recording summaries. The selected backend stack is **Python / FastAPI + PostgreSQL**, matching the workbook. The frontend will use **React with the Astryx design system**, as requested by the student. PostgreSQL will run locally in Docker. Direct Bluetooth, live readings and Android companion integration are future work.
 
-**Current stage:** authentication and CSV import API. `backend/` contains status/readiness, private cookie sessions, CSV validation/preview/confirmation and basic recording history. `frontend/` reserves the React/Astryx structure; screens are not implemented yet. `compose.yaml` reuses the existing PostgreSQL image with pulling disabled. See [authentication](docs/15-authentication.md) and [CSV import/Postman instructions](docs/16-csv-import.md).
+**Current stage:** core backend API implemented and tested. `backend/` contains authentication, CSV import, recording history, date-filtered readings/summaries/charts and recording rename/delete. `frontend/` reserves the React/Astryx structure; screens are not implemented yet. `compose.yaml` reuses the existing PostgreSQL image with pulling disabled. See [authentication](docs/15-authentication.md), [CSV import](docs/16-csv-import.md) and [dashboard endpoints](docs/17-dashboard-api.md).
 
 Start the API in PowerShell:
 

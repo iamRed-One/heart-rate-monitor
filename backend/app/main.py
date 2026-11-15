@@ -20,6 +20,7 @@ from app.services.imports import ImportProblem
 from app.parsers.csv import CsvValidationError
 from app.upload_limits import UploadLimitMiddleware
 from app.maintenance import run_cleanup
+from app.routes.dashboard import router as dashboard_router
 
 
 logger = logging.getLogger(__name__)
@@ -61,6 +62,7 @@ app = FastAPI(
 )
 app.include_router(auth_router)
 app.include_router(imports_router)
+app.include_router(dashboard_router)
 app.add_middleware(UploadLimitMiddleware)
 
 

@@ -26,6 +26,7 @@ Implementation update: the initial schema migration, account/session authenticat
 | [13 Deliverables tracker](13-deliverables-tracker.md) | Exact weekly deliverables mapped to drafts and outstanding evidence | Tracking baseline |
 | [15 Authentication](15-authentication.md) | Implemented schema/auth API, run commands and test evidence | Implemented locally; frontend pending |
 | [16 CSV import](16-csv-import.md) | Preview/confirmation, basic recording history, sample and Postman instructions | Implemented locally; charts/frontend pending |
+| [17 Dashboard API](17-dashboard-api.md) | Readings, summaries, bounded charts, rename/delete and verification | Backend core verified; frontend pending |
 
 ## Decisions and open items
 
