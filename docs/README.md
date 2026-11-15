@@ -24,7 +24,8 @@ Implementation update: the initial schema migration, account/session authenticat
 | [11 User and technical manuals](11-user-and-technical-manuals.md) | Intended workflows and operating procedures | Pre-implementation draft |
 | [12 Evidence and report templates](12-evidence-and-report-templates.md) | Progress, review, defects, change request, metrics and final report | Templates only |
 | [13 Deliverables tracker](13-deliverables-tracker.md) | Exact weekly deliverables mapped to drafts and outstanding evidence | Tracking baseline |
-| [15 Authentication](15-authentication.md) | Implemented schema/auth API, run commands and test evidence | Implemented locally; frontend/imports pending |
+| [15 Authentication](15-authentication.md) | Implemented schema/auth API, run commands and test evidence | Implemented locally; frontend pending |
+| [16 CSV import](16-csv-import.md) | Preview/confirmation, basic recording history, sample and Postman instructions | Implemented locally; charts/frontend pending |
 
 ## Decisions and open items
 

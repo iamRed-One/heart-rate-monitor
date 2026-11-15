@@ -23,6 +23,6 @@ uv run python -m unittest discover -s tests -v
 
 These checks cover safe failures, settings and connection lifecycle using mocks. A successful live `/ready` request is still required to verify your actual PostgreSQL instance.
 
-Registration, login, current-user lookup and logout are at `/api/auth/register`, `/api/auth/login`, `/api/auth/me` and `/api/auth/logout`. Read [the authentication guide](../docs/15-authentication.md) for browser Origin/CSRF requirements, cookie handling and isolated integration-test instructions. Password-reset, email verification, frontend screens and CSV endpoints are not included yet.
+Registration, login, current-user lookup and logout are at `/api/auth/register`, `/api/auth/login`, `/api/auth/me` and `/api/auth/logout`. Read [the authentication guide](../docs/15-authentication.md) for browser Origin/CSRF requirements and cookie handling. [CSV import](../docs/16-csv-import.md) provides preview, confirmation and basic recording-history endpoints, plus a synthetic sample and Postman instructions. Password-reset, email verification and frontend screens are not included yet.
 
 Migration sources are in `migrations/versions`; `migrations/schema.sql` is the initial schema export for review, not a substitute for Alembic revision tracking. Use `uv run alembic check` to detect model/schema drift. Migrations are never applied automatically on API startup.

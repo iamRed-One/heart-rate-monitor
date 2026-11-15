@@ -1,6 +1,8 @@
 """Application entry point and process health endpoints."""
 
 import logging
+import asyncio
+from contextlib import asynccontextmanager, suppress
 
 from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
@@ -13,6 +15,11 @@ from app.config import DatabaseSettings
 from app.database import check_database
 from app.routes.auth import router as auth_router
 from app.services.auth import AuthError
+from app.routes.imports import router as imports_router
+from app.services.imports import ImportProblem
+from app.parsers.csv import CsvValidationError
+from app.upload_limits import UploadLimitMiddleware
+from app.maintenance import run_cleanup
 
 
 logger = logging.getLogger(__name__)
@@ -27,12 +34,57 @@ class ReadinessResponse(BaseModel):
     database: str
 
 
+@asynccontextmanager
+async def lifespan(app):
+    async def cleanup_loop():
+        while True:
+            try:
+                await asyncio.to_thread(run_cleanup)
+            except (SQLAlchemyError, ValidationError, OSError):
+                logger.warning("Scheduled cleanup could not access the database")
+            await asyncio.sleep(300)
+
+    task = asyncio.create_task(cleanup_loop())
+    try:
+        yield
+    finally:
+        task.cancel()
+        with suppress(asyncio.CancelledError):
+            await task
+
+
 app = FastAPI(
     title="Wearable Heart-Rate Data Viewer API",
     description="Recorded heart-rate data viewer. Initial API foundation.",
     version="0.1.0",
+    lifespan=lifespan,
 )
 app.include_router(auth_router)
+app.include_router(imports_router)
+app.add_middleware(UploadLimitMiddleware)
+
+
+@app.exception_handler(ImportProblem)
+async def import_error_handler(request: Request, error: ImportProblem):
+    return JSONResponse(
+        status_code=error.status,
+        content={"code": error.code, "message": error.message},
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@app.exception_handler(CsvValidationError)
+async def csv_error_handler(request: Request, error: CsvValidationError):
+    return JSONResponse(
+        status_code=error.status,
+        content={
+            "code": "csv_validation_failed",
+            "message": "Correct the file and upload it again.",
+            "total_errors": error.total_errors,
+            "errors": error.errors,
+        },
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @app.exception_handler(AuthError)
