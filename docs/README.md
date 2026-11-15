@@ -6,6 +6,8 @@
 
 These documents describe the proposed system. They are reviewable drafts, not evidence that implementation, testing, deployment or peer assessment has occurred. Requirements and numeric limits below are proposed design decisions unless explicitly attributed to the workbook. Actual calendar dates await the course start date.
 
+Implementation update: the status API, PostgreSQL connectivity probe, folder structure and no-pull database configuration now exist. See the [backend instructions](../backend/README.md) for direct run commands. The student reports successful local API/database connection. Earlier implementation plans remain targets rather than reports of completed features. The local development notes are intentionally excluded from Git.
+
 | Document | Purpose | Status |
 | --- | --- | --- |
 | [00 Workbook requirements](00-workbook-requirements.md) | Exact project row, general course plan and project-specific tasks | Source transcription |

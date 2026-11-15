@@ -2,3 +2,20 @@ SE_Personal_Projects_13_Weeks.xlsx
 .impeccable
 .codex
 .gemini
+
+# Local configuration, Python environments and generated files
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.uv-cache/
+node_modules/
+dist/
+*.log
+docs/14-local-development.md
