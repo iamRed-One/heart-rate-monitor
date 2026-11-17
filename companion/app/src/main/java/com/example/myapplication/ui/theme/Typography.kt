@@ -21,42 +21,40 @@ val Manrope = FontFamily(
     variable(R.font.manrope, 300), variable(R.font.manrope, 400), variable(R.font.manrope, 500), variable(R.font.manrope, 600),
 )
 
-val Sans = Manrope
+
 
 
 private const val MIN_LABEL_SP = 12f
 
-fun mono(size: TextUnit, tracking: Float = 0.12f, weight: FontWeight = FontWeight.Medium) =
+fun labelTextStyle(size: TextUnit, tracking: Float = 0.12f, weight: FontWeight = FontWeight.Medium) =
     TextStyle(
         fontFamily = Manrope, fontWeight = weight, fontSize = maxOf(size.value, MIN_LABEL_SP).sp,
         letterSpacing = tracking.coerceAtMost(0.06f).em, fontFeatureSettings = "tnum",
     )
 
-fun serif(size: TextUnit, italic: Boolean = false, lineHeight: Float = 1.0f, tracking: TextUnit = 0.sp): TextStyle {
+fun displayTextStyle(size: TextUnit, heading: Boolean = false, lineHeight: Float = 1.0f, tracking: TextUnit = 0.sp): TextStyle {
     val weight = when {
-        italic -> FontWeight.SemiBold
+        heading -> FontWeight.SemiBold
         size.value >= 56f -> FontWeight.Light
         else -> FontWeight.Normal
     }
-    val track = if (tracking != 0.sp) tracking else if (italic) (-0.02).em else 0.sp
+    val track = if (tracking != 0.sp) tracking else if (heading) (-0.02).em else 0.sp
     return TextStyle(
         fontFamily = Manrope, fontWeight = weight, fontSize = size, lineHeight = size * lineHeight,
         letterSpacing = track, fontFeatureSettings = "tnum",
     )
 }
 
-val Typography = Typography(
-    headlineMedium = serif(34.sp, italic = true),
-    headlineSmall = serif(26.sp, italic = true),
-    titleLarge = serif(24.sp, italic = true),
-    titleMedium = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, lineHeight = 24.sp),
-    titleSmall = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, lineHeight = 20.sp),
-    bodyLarge = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp),
-    bodyMedium = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 20.sp),
-    bodySmall = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp),
-    labelLarge = mono(12.sp, 0.06f),
-    labelMedium = mono(12.sp, 0.06f),
-    labelSmall = mono(12.sp, 0.06f, FontWeight.Normal),
+val HeartTypography = Typography(
+    headlineMedium = displayTextStyle(34.sp, heading = true),
+    headlineSmall = displayTextStyle(26.sp, heading = true),
+    titleLarge = displayTextStyle(24.sp, heading = true),
+    titleMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, lineHeight = 24.sp),
+    titleSmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, lineHeight = 20.sp),
+    bodyLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp),
+    bodyMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 20.sp),
+    bodySmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp),
+    labelLarge = labelTextStyle(12.sp, 0.06f),
+    labelMedium = labelTextStyle(12.sp, 0.06f),
+    labelSmall = labelTextStyle(12.sp, 0.06f, FontWeight.Normal),
 )
-
-val NumberStyle = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontFeatureSettings = "tnum")

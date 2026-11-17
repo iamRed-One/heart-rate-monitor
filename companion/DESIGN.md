@@ -111,7 +111,7 @@ The palette combines forest green, pale foliage and near-black text on white. Fr
 
 - **Brick error** (`error`): account validation and light-theme error role. Collection and transport messages must retain clear text, rather than relying on color alone.
 
-**The Light Identity Rule.** The application entry point explicitly selects the light theme. The retained NightDark palette is shared-code compatibility, not the shipped HeaRt appearance; do not derive new HeaRt screens from its lime, purple or dark canvas.
+**The Light Identity Rule.** HeartTheme contains only the shipped light palette. Do not introduce the former Vigil lime, purple or dark canvas.
 
 ## Typography
 
@@ -135,7 +135,7 @@ The page is predominantly flat: white surfaces, spacing and fine rules separate 
 
 ## Shapes
 
-Custom NButton actions have gently rounded 10dp corners, a 48dp default height and 16dp horizontal padding. Outlined variants use a one-dp border. Native Material fields, chips, navigation indicators, buttons and dialogs retain their component shapes; do not infer a global 10dp radius from the custom button. The heart mark and outlined icons remain clear and recognizable.
+Custom HeartButton actions have gently rounded 10dp corners, a 48dp default height and 16dp horizontal padding. Native Material fields, chips, navigation indicators, buttons and dialogs retain their component shapes; do not infer a global 10dp radius from the custom button. The heart mark and outlined icons remain clear and recognizable.
 
 ## Components
 
@@ -164,7 +164,7 @@ The sidecar contains browser-renderable visual references for the native control
 
 ### Don't:
 
-- Don't introduce the retained dark/lime Vigil appearance into HeaRt.
+- Don't introduce the old dark/lime Vigil appearance into HeaRt.
 - Don't claim that every watch supports collection or that heart rate is ECG or diagnosis.
 - Don't add a duplicate status-bar inset inside the authenticated Scaffold.
 - Don't use decorative shadows or cards to replace the existing flat reading lists.

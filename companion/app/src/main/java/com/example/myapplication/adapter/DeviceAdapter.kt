@@ -69,7 +69,7 @@ interface DeviceAdapter {
     /** On-demand measurements this device can take now (buttons in the UI). */
     fun measurableMetrics(): List<Metric>
 
-    /** Trigger an on-demand measurement; returns readings (stored with Source.MEASUREMENT). */
+    /** Trigger an on-demand measurement and return parsed readings. */
     suspend fun measure(metric: Metric): List<Reading>
 
     /** High-rate raw signals this device can record (ECG / PPG / accelerometer). */

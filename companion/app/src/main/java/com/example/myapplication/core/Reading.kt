@@ -1,10 +1,6 @@
 package com.example.myapplication.core
 
-/**
- * A parsed device reading, independent of Room and provenance. History mappers produce these; the
- * sync engine stamps [Provenance] + a deterministic record id and writes the matching entity.
- * [deviceTsMs] is the record's own device timestamp (epoch ms) — the de-dup coordinate.
- */
+/** Values returned by the retained vendor adapters. */
 sealed interface Reading {
     val metric: Metric
     val deviceTsMs: Long

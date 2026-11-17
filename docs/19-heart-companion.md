@@ -17,7 +17,7 @@ HeaRt is an independent Kotlin/Compose Android application in `companion/`, inst
 |---|---|
 | Backend suite | 44 passed, including integration tests against a separate `_test` database. |
 | Browser suite | 5 passed, including account import/view/rename/delete and live freshness/sidebar behavior. |
-| Android JVM suite | 10 passed, including CSV format/error cases and unsigned 8/16-bit standard Heart Rate decoding. |
+| Android JVM suite | 5 HeaRt-specific tests cover CSV format/error cases and unsigned 8/16-bit standard Heart Rate decoding. The five copied RecordId tests were removed with the unused legacy model. |
 | Android build | Offline debug APK assembled using installed tooling and existing SDK binaries. |
 | Astryx | 20 passed, no failures; two existing font-metadata warnings. |
 | Physical watch | Independent HeaRt connected to ET488#5535 through Veepoo on Samsung SM-A055F. |
