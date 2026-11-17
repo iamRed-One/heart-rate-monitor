@@ -4,7 +4,7 @@ description: A quiet field journal for recorded heart-rate data.
 colors:
   forest-deep: "#173e32"
   accent: "light-dark(#245744, #78bca0)"
-  paper: "#fafbf8"
+  paper: "#ffffff"
   surface: "light-dark(#ffffff, #262626)"
   ink: "light-dark(#000000, #ffffff)"
   secondary-ink: "light-dark(#474747, #9e9e9e)"
@@ -81,13 +81,13 @@ components:
 
 **Creative North Star: "The Field Journal"**
 
-The Field Journal gives recorded readings a calm, personal setting: forest-green anchors, pale paper, warm watch photography and clear Manrope type. Spacious introductions lead into compact tables, quiet charts and thin dividing rules.
+The Field Journal gives recorded readings a calm, personal setting: forest-green anchors, white backgrounds, warm watch photography and clear Manrope type. Spacious introductions lead into compact tables, quiet charts and thin dividing rules.
 
 The implementation uses a fixed light theme. Photography is illustrative; data views retain exact rows and use readable, tabular numbers.
 
 **Key Characteristics:**
 
-- Forest-green anchors on pale paper.
+- Forest-green anchors on white backgrounds.
 - Editorial headings with compact data typography.
 - Thin rules and tonal surfaces before decorative elevation.
 - Control feedback with reduced-motion support.
@@ -160,6 +160,10 @@ Custom control feedback lasts 160ms with cubic-bezier(.23,1,.32,1). Newly opened
 
 Motion explains control feedback and state changes; measurements and chart geometry do not move for decoration.
 
+The sidebar collapses to a 5rem icon rail. FLIP translations move its controls and the workspace over 240ms using cubic-bezier(.23,1,.32,1); its background uses a clipped reveal. Rapid reversals start at the visible position. Keyboard and reduced-motion toggles position immediately. Navigation retains accessible names and the toggle exposes expanded state.
+
+On the live showcase, the heart icon alone scales gently at the latest BPM while updates are fresh. It is explicitly illustrative, not an ECG or beat timing. It stops after ten seconds without a new reading or on connection errors; reduced motion keeps it still. Numeric measurements and table rows do not animate.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -173,4 +177,4 @@ Motion explains control feedback and state changes; measurements and chart geome
 
 - Don't animate readings or chart geometry for decoration.
 - Don't add a surrounding card or navbar to authentication.
-- Don't imply live-device acquisition or clinical interpretation through the visuals.
+- Don't imply an ECG, exact beat timing or clinical interpretation through the visuals. Label the temporary ET488/Vigil live acquisition separately from saved CSV recordings.

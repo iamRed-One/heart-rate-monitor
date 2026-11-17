@@ -10,7 +10,7 @@ export const fieldJournalTheme = defineTheme({
   tokens: {
     '--font-family-body': '"Manrope Variable", sans-serif',
     '--font-family-heading': '"Manrope Variable", sans-serif',
-    '--color-background-body': '#fafbf8',
+    '--color-background-body': '#ffffff',
     '--color-border-default': '#d9e1da',
     '--radius-control': '.625rem',
     '--size-element-md': '2.75rem',

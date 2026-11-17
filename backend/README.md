@@ -28,3 +28,5 @@ Registration, login, current-user lookup and logout are at `/api/auth/register`,
 Migration sources are in `migrations/versions`; `migrations/schema.sql` is the initial schema export for review, not a substitute for Alembic revision tracking. Use `uv run alembic check` to detect model/schema drift. Migrations are never applied automatically on API startup.
 
 The [dashboard API](../docs/17-dashboard-api.md) supplies `/api/readings`, `/api/summary`, `/api/chart`, and PATCH/DELETE recording operations. Date filters are shared, cursors are scoped, chart responses are bounded and mutations enforce ownership/CSRF. These endpoints use the existing migration and require no additional package installation.
+
+The optional [live showcase](../docs/18-watch-companion-live.md) adds `/api/live/sessions`, `/api/live/current`, one-use `/api/live/pair` and per-session reading ingestion. It is a single-process, bounded in-memory demo; restarting the server closes sessions. Viewer access uses existing cookie authentication; companion ingestion uses a separate scoped bearer token. It requires no new packages or database migration.

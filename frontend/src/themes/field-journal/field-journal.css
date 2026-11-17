@@ -194,7 +194,7 @@
     --color-syntax-added-marker: var(--color-syntax-punctuation);
     --color-syntax-removed-marker: var(--color-syntax-punctuation);
     --color-background-surface: light-dark(#ffffff, #262626);
-    --color-background-body: #fafbf8;
+    --color-background-body: #ffffff;
     --color-background-card: light-dark(#ffffff, #1b1b1b);
     --color-background-popover: light-dark(#ffffff, #1b1b1b);
     --color-background-muted: light-dark(#f1f1f1, #1b1b1b);

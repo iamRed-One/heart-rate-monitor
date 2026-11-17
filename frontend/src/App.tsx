@@ -2,7 +2,10 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
+  useRef,
   useState,
+  type MouseEvent,
   type ReactNode,
 } from "react";
 import {
@@ -21,6 +24,10 @@ import {
   Library,
   LogOut,
   ArrowUpRight,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Activity,
+  HeartPulse,
 } from "lucide-react";
 import { api, setCsrf, type User } from "./lib/api";
 import {
@@ -36,6 +43,7 @@ import { AuthPage } from "./pages/Auth";
 import { Dashboard } from "./pages/Dashboard";
 import { Imports } from "./pages/Imports";
 import { Recordings } from "./pages/Recordings";
+import { Live } from "./pages/Live";
 import { styles } from "./styles";
 type Session = {
   user: User | null;
@@ -49,6 +57,76 @@ function Shell() {
   const location = useLocation();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [sidebarMotion, setSidebarMotion] = useState(false);
+  const shell = useRef<HTMLElement>(null);
+  const sidebarAnimations = useRef<Animation[]>([]);
+  const previousPositions = useRef<Map<string, DOMRect> | null>(null);
+  const motionParts = [
+    ".workspace",
+    ".sidebar nav",
+    ".sidebar-heading button",
+    ".sidebar-bottom button",
+    ".sidebar .brand svg",
+  ];
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("heart-rate.sidebar-collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+  function toggleSidebar(event: MouseEvent) {
+    const animate =
+      event.detail !== 0 &&
+      !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setSidebarMotion(animate);
+    // Measure the visible positions before cancelling, so a quick reversal starts
+    // where the previous transition currently is rather than jumping to its end.
+    previousPositions.current = animate
+      ? new Map(
+          motionParts.flatMap((selector) => {
+            const element = shell.current?.querySelector(selector);
+            return element
+              ? [[selector, element.getBoundingClientRect()] as const]
+              : [];
+          }),
+        )
+      : null;
+    sidebarAnimations.current.forEach((animation) => animation.cancel());
+    sidebarAnimations.current = [];
+    try {
+      localStorage.setItem("heart-rate.sidebar-collapsed", String(!collapsed));
+    } catch {}
+    setCollapsed(!collapsed);
+  }
+  useLayoutEffect(() => {
+    const positions = previousPositions.current;
+    previousPositions.current = null;
+    if (!positions) return;
+    for (const [selector, before] of positions) {
+      const element = shell.current?.querySelector<HTMLElement>(selector);
+      if (!element) continue;
+      const after = element.getBoundingClientRect();
+      if (!before.width || !after.width) continue;
+      const dx = before.left - after.left,
+        dy = before.top - after.top;
+      if (Math.abs(dx) + Math.abs(dy) < 0.5) continue;
+      sidebarAnimations.current.push(
+        element.animate(
+          [
+            { transform: `translate(${dx}px, ${dy}px)` },
+            { transform: "translate(0, 0)" },
+          ],
+          { duration: 240, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        ),
+      );
+    }
+  }, [collapsed]);
+  useEffect(
+    () => () =>
+      sidebarAnimations.current.forEach((animation) => animation.cancel()),
+    [],
+  );
   if (!ready) return <Loading text="Checking your session…" />;
   if (!user)
     return (
@@ -72,21 +150,76 @@ function Shell() {
     }
   }
   return (
-    <section className="app-shell">
+    <section
+      ref={shell}
+      className={
+        "app-shell" +
+        (collapsed ? " sidebar-collapsed" : "") +
+        (sidebarMotion ? "" : " sidebar-instant")
+      }
+    >
       <aside className="sidebar">
-        <Brand />
-        <nav aria-label="Workspace">
-          <NavLink to="/dashboard">
+        <section className="sidebar-heading">
+          {collapsed ? (
+            <Link
+              className="brand compact-brand"
+              to="/dashboard"
+              aria-label="Heart Rate overview"
+            >
+              <Activity size={26} />
+            </Link>
+          ) : (
+            <Brand />
+          )}
+          <Button
+            label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            icon={
+              collapsed ? (
+                <PanelLeftOpen size={20} />
+              ) : (
+                <PanelLeftClose size={20} />
+              )
+            }
+            isIconOnly
+            tooltip={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            variant="ghost"
+            onClick={toggleSidebar}
+            aria-expanded={!collapsed}
+            aria-controls="workspace-navigation"
+          />
+        </section>
+        <nav id="workspace-navigation" aria-label="Workspace">
+          <NavLink
+            to="/dashboard"
+            aria-label="Overview"
+            title={collapsed ? "Overview" : undefined}
+          >
             <LayoutDashboard size={19} />
-            Overview
+            <Text className="nav-label">Overview</Text>
           </NavLink>
-          <NavLink to="/import">
+          <NavLink
+            to="/import"
+            aria-label="Import data"
+            title={collapsed ? "Import data" : undefined}
+          >
             <Upload size={19} />
-            Import data
+            <Text className="nav-label">Import data</Text>
           </NavLink>
-          <NavLink to="/recordings">
+          <NavLink
+            to="/recordings"
+            aria-label="Recordings"
+            title={collapsed ? "Recordings" : undefined}
+          >
             <Library size={19} />
-            Recordings
+            <Text className="nav-label">Recordings</Text>
+          </NavLink>
+          <NavLink
+            to="/live"
+            aria-label="Live watch"
+            title={collapsed ? "Live watch" : undefined}
+          >
+            <HeartPulse size={19} />
+            <Text className="nav-label">Live watch</Text>
           </NavLink>
         </nav>
         <VStack gap={3} className="sidebar-bottom">
@@ -101,6 +234,8 @@ function Shell() {
             variant="secondary"
             onClick={logout}
             isLoading={busy}
+            isIconOnly={collapsed}
+            tooltip={collapsed ? "Sign out" : undefined}
           />
         </VStack>
       </aside>
@@ -116,8 +251,7 @@ function Shell() {
           <Outlet />
         </main>
         <footer className="workspace-footer">
-          Recorded data only. For exploration, not medical diagnosis. All times
-          shown in UTC.
+          For exploration, not medical diagnosis. All times shown in UTC.
         </footer>
       </section>
     </section>
@@ -205,6 +339,7 @@ export function App() {
           <Route path="/recordings/:id" element={<Dashboard />} />
           <Route path="/import" element={<Imports />} />
           <Route path="/recordings" element={<Recordings />} />
+          <Route path="/live" element={<Live />} />
         </Route>
         <Route
           path="*"

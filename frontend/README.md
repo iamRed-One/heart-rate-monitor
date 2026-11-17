@@ -32,8 +32,11 @@ Manrope is self-hosted through `@fontsource-variable/manrope`. Astryx's doctor m
 - `/import`: CSV validation, source labels, preview expiry and explicit confirmation/discard.
 - `/recordings`: paginated collection, rename and confirmed deletion.
 - `/recordings/:id`: one recording's chart and readings.
+- `/live`: temporary ET488/Vigil showcase with one-use pairing, fresh/stale feedback and a BPM-paced heart illustration. See [watch and companion findings](../docs/18-watch-companion-live.md).
 
 Dates use UTC. Chart lines stop across recordings and gaps longer than five minutes. Aggregated charts show bucket ranges and averages; the table keeps exact readings available. Wide tables scroll horizontally and can receive keyboard focus. Motion is limited to control feedback, the auth panel and Astryx dialogs, with reduced-motion support.
+
+The sidebar can collapse to an icon rail and remembers that preference. Its 240 ms transition uses FLIP translations and a clipped background, without stretching text or animating layout widths. Reduced motion uses immediate positioning. The live heart is illustrative, follows fresh BPM updates and stops when data becomes stale.
 
 ## Design and assets
 
