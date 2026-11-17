@@ -19,7 +19,8 @@ type Sample = {
 };
 type LiveState = {
   id: string;
-  status: "waiting" | "connected" | "receiving" | "stale";
+  status: "waiting" | "connected" | "receiving" | "stale" | "stopped";
+  recording_id?: string | null;
   device_label: string | null;
   expires_at: string;
   last_received_at: string | null;
@@ -42,7 +43,7 @@ export function Live() {
   const current = useRef<string | null>(null);
   useEffect(() => {
     let active = true;
-    api<LiveState | null>("/live/current")
+    const restore = () => api<LiveState | null>("/live/current")
       .then((state) => {
         if (active && state && !current.current) {
           setSession(state);
@@ -57,8 +58,11 @@ export function Live() {
       .catch((e) => {
         if (active) setError((e as Error).message);
       });
+    const timer = setInterval(() => { if (!current.current) void restore(); }, 2000);
+    void restore();
     return () => {
       active = false;
+      clearInterval(timer);
     };
   }, []);
   useEffect(() => {
@@ -102,7 +106,7 @@ export function Live() {
     setError("");
     setCopied(false);
     try {
-      const result = await api<Pairing>("/live/sessions", { method: "POST" });
+      const result = await api<Pairing>("/live/sessions", { method: "POST", body: JSON.stringify({save_recording: true}) });
       setSession(null);
       setPairing(result);
     } catch (e) {
@@ -138,26 +142,27 @@ export function Live() {
   const age = last
     ? Math.max(
         0,
-        Math.floor((now - new Date(last.received_at).getTime()) / 1000),
+        Math.floor((now - new Date(last.timestamp).getTime()) / 1000),
       )
     : null;
   const fresh =
     !!last &&
     age !== null &&
     age <= 10 &&
+    session?.status === "receiving" &&
     !error &&
     !!pairing &&
-    now < new Date(pairing.expires_at).getTime();
+    now < new Date(session?.expires_at ?? pairing.expires_at).getTime();
   const paired = !!session && session.status !== "waiting";
   return (
     <VStack gap={8}>
       <PageTitle
         title="A live look at your heart rate."
-        description="ET488 → Vigil on your phone → this viewer. Only new watch measurements appear here."
+        description="Your wearable → HeaRt on your phone → this viewer. Readings save to your account."
         action={
           pairing ? (
             <Button
-              label="End showcase"
+              label="Stop recording"
               variant="secondary"
               onClick={stop}
               isLoading={busy}
@@ -171,21 +176,21 @@ export function Live() {
           <Radio size={34} strokeWidth={1.5} />
           <Heading level={2}>Connect your companion.</Heading>
           <Text color="secondary">
-            Wear the watch and open Vigil. Start a showcase here, then enter its
-            code in Vigil’s Live heart-rate showcase screen.
+            Wear your device and open HeaRt. Start recording on your phone, or
+            start here and enter the pairing code on HeaRt’s Live page.
           </Text>
           <HStack>
             <Button
-              label="Start showcase"
+              label="Start recording"
               variant="primary"
               onClick={start}
               isLoading={busy}
             />
           </HStack>
           <Text className="small-muted">
-            This is a temporary live view. It keeps the latest 300 samples in
-            memory and ends after 30 minutes or a server restart. It does not
-            save a recording.
+            Collection continues until you press Stop. Saved readings appear in
+            Overview and Recordings. This view shows the latest 300 readings;
+            a server restart closes the live connection but keeps saved data.
           </Text>
         </VStack>
       ) : (
@@ -195,9 +200,9 @@ export function Live() {
               <VStack gap={4}>
                 <HStack gap={2} vAlign="center">
                   <Link2 size={20} />
-                  <Heading level={2}>Pair Vigil with this view.</Heading>
+                  <Heading level={2}>Pair HeaRt with this view.</Heading>
                 </HStack>
-                <Text>Open Vigil → Your data → Live heart-rate showcase.</Text>
+                <Text>Open HeaRt → Live → Web pairing code → Start recording.</Text>
                 <HStack gap={4} wrap="wrap">
                   {pairing.pairing_code && (
                     <code className="pairing-code">{pairing.pairing_code}</code>
@@ -216,7 +221,7 @@ export function Live() {
                 </HStack>
                 <Text color="secondary">
                   Use this code once within 10 minutes. Keep it private: it
-                  authorises this phone to send readings to your showcase.
+                  authorises this phone to send readings to your recording.
                 </Text>
                 <details>
                   <summary>Local USB connection</summary>
@@ -224,7 +229,7 @@ export function Live() {
                     With USB debugging connected, run{" "}
                     <code>adb reverse tcp:8000 tcp:8000</code> on your computer.
                     Use <code>http://127.0.0.1:8000</code> as the server address
-                    in the debug Vigil app. USB carries the phone-to-computer
+                    in the debug HeaRt app. USB carries the phone-to-computer
                     traffic; Bluetooth still connects the watch to the phone.
                   </Text>
                 </details>

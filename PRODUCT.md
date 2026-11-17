@@ -20,11 +20,11 @@ Import a supported CSV, review it before saving, then explore exact readings, ch
 
 ## Operating Context
 
-Local development with a tested API, PostgreSQL and TablePlus. The recorded-data workflow imports timestamp/heart_rate CSV. A separate temporary live showcase uses the ET488 through Vigil on a connected Android phone. The index opens login; a public home page is retained at /home.
+Local development with a tested API, PostgreSQL and TablePlus. The recorded-data workflow imports timestamp/heart_rate CSV. An independent HeaRt Kotlin companion connects compatible wearables and sends live readings to the same account API. The index opens login; a public home page is retained at /home.
 
 ## Capabilities and Constraints
 
-Accounts use private cookie sessions, an Origin check and CSRF tokens. CSV validation is all-or-nothing, with a preview before confirmation. Date filters use UTC days. Chart aggregation is disclosed and exact readings remain available. The live showcase uses one-use pairing and scoped uploads; it retains at most 300 samples in one API process for 30 minutes, with no durable recording. Its heart illustration is BPM-paced, not a waveform, and stops when data is stale. Vigil additions are temporary, debug-only and marked for removal. No direct browser Bluetooth, clinical diagnosis, emergency alerts, social login or password reset is implemented. Vigil's full 15-column CSV export was inspected and does not yet match the strict web importer.
+Accounts use private cookie sessions, an Origin check and CSRF tokens. CSV validation is all-or-nothing, with a preview before confirmation. Date filters use UTC days. Chart aggregation is disclosed and exact readings remain available. Live collection uses one-use pairing and scoped uploads. Persistent sessions save samples to PostgreSQL; the live viewer retains the latest 300 samples in memory. Active phone control renews the connection until Stop; a server/process restart closes the control connection while committed readings remain available. The heart illustration is BPM-paced and stops when capture timestamps become stale. HeaRt includes a local recovery outbox and CSV conversion for compatible full Vigil heart-rate exports. No direct browser Bluetooth, clinical diagnosis, emergency alerts, social login or password reset is implemented.
 
 ## Brand Commitments
 

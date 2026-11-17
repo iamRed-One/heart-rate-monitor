@@ -40,6 +40,6 @@ Implementation update: the initial schema migration, account/session authenticat
 
 ## Reading order
 
-The optional live showcase and the inspected Vigil export format are documented in [18 Watch and companion findings](18-watch-companion-live.md). This extension does not replace the recorded-data coursework baseline.
+The inspected Vigil export format and earlier live proof are documented in [18 Watch and companion findings](18-watch-companion-live.md). The independent HeaRt app and durable recording extension are documented in [19 HeaRt implementation and verification](19-heart-companion.md). These additions preserve the recorded-data coursework baseline.
 
 Read the proposal, SRS and planning documents first. Review import rules and scope before using the design as an implementation baseline. Compare the tracker against the verbatim workbook extraction when preparing submissions. Mermaid diagrams are text-based drafts; export rendered figures for a submission format if required.

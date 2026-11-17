@@ -107,7 +107,7 @@ test("live view restores a session and stops illustrating a stale or failed feed
     samples: [
       {
         sample_id: "sample-1",
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(Date.now() - (stale ? 20000 : 0)).toISOString(),
         received_at: new Date(Date.now() - (stale ? 20000 : 0)).toISOString(),
         heart_rate: 72,
       },

@@ -1,4 +1,10 @@
-# ET488 acquisition, Vigil exports and the live showcase
+# Wearable acquisition and HeaRt live recording
+
+The original Vigil showcase below is historical acquisition evidence. The current independent application is **HeaRt**, under `companion/`; see [its setup and recovery notes](../companion/README.md).
+
+HeaRt uses the same account API, repeats measurement cycles until Stop, saves a local outbox and uploads persistent recordings to PostgreSQL. The web Live page follows these samples and can stop collection. Existing Overview/Recordings endpoints include saved live readings. The web viewer shows only the latest 300 samples; older saved samples remain accessible through recording endpoints. The companion can convert compatible full Vigil CSV exports before backend preview/confirmation. Protocol support is explicit, not universal watch compatibility.
+
+## Original Vigil acquisition evidence
 
 ## What was verified
 
