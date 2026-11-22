@@ -46,9 +46,11 @@ fun displayTextStyle(size: TextUnit, heading: Boolean = false, lineHeight: Float
 }
 
 val HeartTypography = Typography(
-    headlineMedium = displayTextStyle(34.sp, heading = true),
+    displayLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Light, fontSize = 80.sp,
+        lineHeight = 86.sp, letterSpacing = (-2).sp, fontFeatureSettings = "tnum"),
+    headlineMedium = displayTextStyle(28.sp, heading = true),
     headlineSmall = displayTextStyle(26.sp, heading = true),
-    titleLarge = displayTextStyle(24.sp, heading = true),
+    titleLarge = displayTextStyle(22.sp, heading = true),
     titleMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, lineHeight = 24.sp),
     titleSmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, lineHeight = 20.sp),
     bodyLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp),

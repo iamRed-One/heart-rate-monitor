@@ -351,7 +351,7 @@ class WatchAdapter(context: Context) : DeviceAdapter {
             kotlinx.coroutines.delay(durationMs.coerceIn(1_000L, 120_000L))
         } finally {
             withContext(kotlinx.coroutines.NonCancellable + kotlinx.coroutines.Dispatchers.Main) {
-                runCatching { vp.stopDetectHeart(write) }
+                stopHeartDetection()
             }
         }
         return true
@@ -381,9 +381,9 @@ class WatchAdapter(context: Context) : DeviceAdapter {
 
             Metric.HEART_RATE -> awaitMeasure({ done ->
                 vp.startDetectHeart(write, com.veepoo.protocol.listener.data.IHeartDataListener { d ->
-                    (d?.data?.takeIf { it > 0 })?.let { done(com.example.myapplication.core.Reading.Scalar(Metric.HEART_RATE, now, it.toDouble(), "bpm")) }
+                    (d?.data?.takeIf { it > 0 })?.let { done(com.example.myapplication.core.Reading.Scalar(Metric.HEART_RATE, System.currentTimeMillis(), it.toDouble(), "bpm")) }
                 })
-            }, { runCatching { vp.stopDetectHeart(write) } })
+            }, { stopHeartDetection() })
 
             Metric.SPO2 -> awaitMeasure({ done ->
                 vp.startDetectSPO2H(write, com.veepoo.protocol.listener.data.ISpo2hDataListener { d ->
@@ -439,15 +439,30 @@ class WatchAdapter(context: Context) : DeviceAdapter {
     /** Start a measurement, resume on the first valid reading (or timeout), then stop. */
     private suspend fun awaitMeasure(
         start: (done: (com.example.myapplication.core.Reading) -> Unit) -> Unit,
-        stop: () -> Unit,
-    ): com.example.myapplication.core.Reading? {
-        val r = withTimeoutOrNull(MEASURE_TIMEOUT_MS) {
-            suspendCancellableCoroutine<com.example.myapplication.core.Reading> { cont ->
-                handler.post { start { reading -> if (cont.isActive) cont.resume(reading) } }
+        stop: suspend () -> Unit,
+    ): com.example.myapplication.core.Reading? = try {
+        withTimeoutOrNull(MEASURE_TIMEOUT_MS) {
+            withContext(Dispatchers.Main) {
+                suspendCancellableCoroutine { cont ->
+                    start { reading -> if (cont.isActive) cont.resume(reading) }
+                }
             }
         }
-        handler.post { stop() }
-        return r
+    } finally {
+        withContext(kotlinx.coroutines.NonCancellable + Dispatchers.Main) { stop() }
+    }
+
+    private suspend fun stopHeartDetection() {
+        withTimeoutOrNull(CMD_TIMEOUT_MS) {
+            suspendCancellableCoroutine<Unit> { cont ->
+                runCatching {
+                    vp.stopDetectHeart(IBleWriteResponse { code ->
+                        Log.d("watch", "heart detector stop response=$code")
+                        if (cont.isActive) cont.resume(Unit)
+                    })
+                }.onFailure { if (cont.isActive) cont.resume(Unit) }
+            }
+        }
     }
 
     /** TimeData (Y/M/D H:M:S) → epoch ms. */

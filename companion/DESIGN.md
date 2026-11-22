@@ -1,24 +1,24 @@
 ---
 name: HeaRt Android
-description: Independent native heart-rate collection with the HeaRt white and forest-green identity.
+description: Independent native heart-rate collection with the HeaRt crimson and warm-white identity.
 colors:
   background: "#FFFFFF"
   surface: "#FFFFFF"
-  surface2: "#EDF2ED"
-  line: "#D9E1DA"
-  line2: "#BCCBBF"
-  ink: "#0C0B10"
-  muted: "#4A4652"
-  dim: "#6B6672"
+  surface2: "#F8E9ED"
+  line: "#EADDE1"
+  line2: "#D7BDC6"
+  ink: "#281C22"
+  muted: "#6E5D65"
+  dim: "#77666F"
   faint: "#8C8794"
-  accent: "#245744"
+  accent: "#BC2341"
   on-accent: "#FFFFFF"
-  accent-ink: "#173E32"
+  accent-ink: "#9E1C38"
   error: "#C2361A"
 typography:
   display:
     fontFamily: Manrope
-    fontSize: 72sp
+    fontSize: 80sp
     fontWeight: 300
     lineHeight: 1
     fontFeature: tnum
@@ -44,7 +44,7 @@ typography:
     fontWeight: 500
     letterSpacing: 0.06em
 rounded:
-  button: 10dp
+  button: 14dp
 spacing:
   inline: 8dp
   related: 10dp
@@ -156,7 +156,7 @@ The sidecar contains browser-renderable visual references for the native control
 
 ### Do:
 
-- Do use the light white and forest-green identity on every HeaRt screen.
+- Do use the light crimson and warm-white identity on every HeaRt screen.
 - Do keep native Android navigation, forms, dialogs, permission prompts and file pickers familiar.
 - Do show device compatibility, collection state and recovery feedback explicitly.
 - Do keep BPM values tabular and pair them with units.
@@ -168,3 +168,13 @@ The sidecar contains browser-renderable visual references for the native control
 - Don't claim that every watch supports collection or that heart rate is ECG or diagnosis.
 - Don't add a duplicate status-bar inset inside the authenticated Scaffold.
 - Don't use decorative shadows or cards to replace the existing flat reading lists.
+
+## Home measurement feedback
+
+Connecting does not start the sensor. Read heart rate stops after one result or timeout. Recording is the only continuous mode. Keep the last BPM visible with its age; never clear it between callbacks. Fade actual number changes over 140ms, without interpolating medical values. Pulse the anatomical illustration only during measurement, fade its amplitude over 180ms, and respect system animation settings.
+
+References: WHOOP mobile website, discovered through Nutlope Inspo; adapted for native controls and accessibility. The illustration is pre-rendered 3D artwork, not a real-time 3D model.
+
+## Appearance and navigation
+
+Follow the system theme until the user chooses light or dark with the accessible sun/moon control on the app and account headers. Persist that choice locally. Dark mode uses a near-black plum canvas (#151114), raised surfaces (#211B20), warm pale text (#F6EAF0), muted text (#CFBAC4) and rose actions (#FF8FA3 with #480A1B text). Material fields, sheets, dialogs and custom controls share the same semantic color roles. The bottom navigation is a flat native tab row with a hairline divider, filled selected icon and crimson/rose selected label; no selection pill or floating dock.

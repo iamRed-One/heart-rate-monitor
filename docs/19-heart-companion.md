@@ -4,7 +4,9 @@ HeaRt is an independent Kotlin/Compose Android application in `companion/`, inst
 
 ## Delivered behavior
 
-- Sign in and registration, visible Android status bar, and four native destinations: Devices, Live, Readings and Files.
+- Sign in and registration, visible Android status bar, and four native destinations: Home, Devices, History and Files.
+- Crimson native redesign, anatomical heart artwork, persistent light/dark appearance selection and a flat bottom tab bar.
+- Connecting is passive. Read heart rate takes one result and stops; a saved recording explicitly enables repeated measurements. Timeout/cancellation cleanup stops the sensor before disconnecting. The last BPM remains visible with its age and a short crossfade.
 - Existing ET488/Veepoo and Q520/Yucheng adapters, plus a standard Bluetooth Heart Rate service adapter. Proprietary watch support requires a compatible protocol; this is not universal Bluetooth watch support.
 - User-controlled Start/Stop, repeated SDK measurement cycles, ongoing foreground notification and automatic short-outage retries.
 - Local-first sample queue; durable PostgreSQL acknowledgement; timestamp-based freshness; bounded live display; owner-scoped recording/readings access.
@@ -17,7 +19,7 @@ HeaRt is an independent Kotlin/Compose Android application in `companion/`, inst
 |---|---|
 | Backend suite | 44 passed, including integration tests against a separate `_test` database. |
 | Browser suite | 5 passed, including account import/view/rename/delete and live freshness/sidebar behavior. |
-| Android JVM suite | 5 HeaRt-specific tests cover CSV format/error cases and unsigned 8/16-bit standard Heart Rate decoding. The five copied RecordId tests were removed with the unused legacy model. |
+| Android JVM suite | 11 tests passed on November 22: five CSV/standard Heart Rate decoding tests and six monitor tests, including passive connection, single-shot completion, cancellation and freshness. |
 | Android build | Offline debug APK assembled using installed tooling and existing SDK binaries. |
 | Astryx | 20 passed, no failures; two existing font-metadata warnings. |
 | Physical watch | Independent HeaRt connected to ET488#5535 through Veepoo on Samsung SM-A055F. |
@@ -27,6 +29,8 @@ HeaRt is an independent Kotlin/Compose Android application in `companion/`, inst
 | Account UI | Sign-in succeeded; registration's invalid-email validation and visible dark status-bar icons were checked on device. |
 
 The watch recording is real device evidence; the CSV/browser fixtures are synthetic. No stored CSV was replayed as live data. Standard-service devices were tested at decoder level; Q520 and other models were not physically verified as part of this HeaRt run.
+
+The acquisition and persistence evidence above predates the November 22 redesign and manual-reading update. The latest APK was built and installed on the Samsung phone; both themes, account screen, flat tabs and persistent appearance preference were checked. All 18 sampled light/dark text-contrast pairs met 4.5:1. ET488 reconnection did not complete during that update, so physical sensor release after the new manual read still needs confirmation. Backend and browser suites were not rerun for that UI pass; their results above are historical.
 
 ## Cleanup and limits
 

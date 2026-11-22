@@ -1,24 +1,25 @@
 package com.example.myapplication.heart
 
 import android.content.Context
-import com.example.myapplication.adapter.WatchAdapter
 import com.example.myapplication.core.DeviceKind
-import com.example.myapplication.core.Metric
 import com.example.myapplication.core.Reading
 import com.example.myapplication.core.Time
 import com.example.myapplication.sync.ConnectionManager
-import com.example.myapplication.sync.SyncService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
 
 data class CollectionState(val active: Boolean=false, val message: String="Ready to record", val sent: Int=0, val captured: Int=0, val bpm: Int?=null, val lastAt: Long=0, val recordingId: String?=null)
 
 class HeartCollector(private val context: Context, private val scope: CoroutineScope,
-    private val connection: (DeviceKind)->ConnectionManager?) {
+    private val connection: (DeviceKind)->ConnectionManager?, private val monitor: HeartMonitor) {
     val store = HeartStore(context)
     private val mutable = MutableStateFlow(CollectionState())
     val state = mutable.asStateFlow()
@@ -26,9 +27,10 @@ class HeartCollector(private val context: Context, private val scope: CoroutineS
     private var uploadToken: String?=null
     private var owner=""
     private var recording=""
+    private val uploadMutex = Mutex()
 
     fun start(kind: DeviceKind, pairingCode: String = "") {
-        if (job?.isActive==true) return
+        if (job?.isCompleted == false) return
         val cm=connection(kind)
         if(cm==null || !cm.isReady) { mutable.update{it.copy(message="Connect the selected device first.")}; return }
         owner=HeartApi.account.value.id
@@ -37,7 +39,6 @@ class HeartCollector(private val context: Context, private val scope: CoroutineS
             mutable.value=CollectionState(active=true,message="Starting your recording…")
             var paired=false
             try {
-                withContext(Dispatchers.Main) { SyncService.start(context) }
                 val created=if(pairingCode.isBlank()) HeartApi.call("/live/sessions","POST",JSONObject().put("save_recording",true)) else JSONObject().put("pairing_code",pairingCode.trim())
                 recording=created.optString("id")
                 val pairedData=HeartApi.call("/live/pair","POST",JSONObject().put("code",created.getString("pairing_code"))
@@ -64,37 +65,33 @@ class HeartCollector(private val context: Context, private val scope: CoroutineS
                         }
                     }
                     try {
-                        while(isActive) {
-                            if(!cm.isReady) { mutable.update{it.copy(message="Device disconnected. Reconnecting…")}; delay(2000) }
-                            cm.execute("heart-live") { adapter ->
-                                if(adapter is WatchAdapter) adapter.captureHeartRate(30_000L) { sample ->
-                                    if(incoming.trySend(sample).isFailure) mutable.update{it.copy(message="Local buffer full. Stop and check the phone.")}
-                                } else adapter.measure(Metric.HEART_RATE).filterIsInstance<Reading.Scalar>().filter{it.metric==Metric.HEART_RATE}.forEach { incoming.send(it) }
-                            }
-                            delay(500)
+                        val receiver = launch(start = CoroutineStart.UNDISPATCHED) {
+                            monitor.samples.filter { it.kind == kind }.collect { incoming.send(it.reading) }
                         }
+                        try { monitor.start(kind, continuous = true); receiver.join() }
+                        finally { receiver.cancel() }
                     } finally {
                         incoming.close(); withContext(NonCancellable) { withTimeoutOrNull(3000) { writer.join() } }
                         uploader.cancel();control.cancel()
                     }
                 }
             } catch(e: CancellationException) {
-                mutable.update{it.copy(message="Recording stopped. Saved readings remain available.")}
+                mutable.update{it.copy(message="Recording saved. Tap Read heart rate for another measurement.")}
                 throw e
             } catch(e: Exception) { mutable.update{it.copy(message=e.message ?: "Recording stopped. Check your connection.")} }
             finally {
+                monitor.stop()
                 if(paired) withContext(NonCancellable) {
                     withTimeoutOrNull(12000) { runCatching { flush() };runCatching { HeartApi.call("/live/sessions/$recording/finish","POST",bearer=uploadToken) } }
                 }
                 mutable.update{it.copy(active=false)}
-                withContext(Dispatchers.Main) { SyncService.stop(context) }
             }
         }
     }
-    fun stop(){job?.cancel()}
+    fun stop(){job?.cancel(); monitor.stop()}
     fun retry(){if(uploadToken!=null)scope.launch { try {flush();mutable.update{it.copy(message="Pending upload checked.")}}catch(e:Exception){mutable.update{it.copy(message=e.message ?: "Upload unavailable. Export your local CSV for recovery.")}} }}
-    private suspend fun flush() {
-        val token=uploadToken ?: return
+    private suspend fun flush() = uploadMutex.withLock {
+        val token=uploadToken ?: return@withLock
         val rows=withContext(Dispatchers.IO){store.rows(owner,recording,pending=true,limit=30)}
         for(row in rows) {
             HeartApi.call("/live/sessions/$recording/readings","POST",JSONObject().put("sample_id",row.id).put("timestamp",row.timestamp).put("heart_rate",row.bpm),token)
@@ -102,5 +99,5 @@ class HeartCollector(private val context: Context, private val scope: CoroutineS
             delay(110)
         }
     }
-    private class RecordingStopped: Exception("Stopped from the web viewer. Your readings have been saved.")
+    private class RecordingStopped: Exception("Recording stopped from the web. Tap Read heart rate to measure again.")
 }

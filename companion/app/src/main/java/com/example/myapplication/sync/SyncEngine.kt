@@ -7,6 +7,7 @@ import com.example.myapplication.adapter.StandardHeartAdapter
 import com.example.myapplication.adapter.WatchAdapter
 import com.example.myapplication.core.DeviceKind
 import com.example.myapplication.heart.HeartCollector
+import com.example.myapplication.heart.HeartMonitor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.json.JSONArray
@@ -16,6 +17,7 @@ data class HeartDevice(val deviceId: String, val kind: DeviceKind, val model: St
 
 /** Connects supported devices without unrelated history pulls or clinic jobs. */
 class SyncEngine(context: Context) {
+    private val appContext = context.applicationContext
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val preferences = context.getSharedPreferences("heart-devices", Context.MODE_PRIVATE)
     private val scanner = Scanner(context)
@@ -31,10 +33,17 @@ class SyncEngine(context: Context) {
     val watchState get() = watch.state
     val ringState get() = ring.state
     val standardState get() = standard.state
-    val collector = HeartCollector(context, scope, ::connection)
+    val monitor = HeartMonitor(scope, ::connection)
+    val collector = HeartCollector(context, scope, ::connection, monitor)
     private var scanJob: Job? = null
 
     init {
+        scope.launch {
+            combine(monitor.state, collector.state) { live, saving -> live.active || saving.active }
+                .distinctUntilChanged().collect { active ->
+                    if (!active && SyncService.running.value) SyncService.stop(appContext)
+                }
+        }
         listOf(watch, ring, standard).forEach { manager ->
             scope.launch {
                 manager.state.collect { state ->
@@ -44,11 +53,30 @@ class SyncEngine(context: Context) {
                                 remember(HeartDevice(info.deviceId, info.kind, info.model, info.battery))
                             }
                         }
+                        monitor.connected(manager.kind)
+                    } else if (monitor.state.value.kind == manager.kind) {
+                        monitor.disconnected()
                     }
                 }
             }
         }
     }
+
+    fun readHeartRate(kind: DeviceKind) {
+        scope.launch(Dispatchers.Main) {
+            runCatching { SyncService.start(appContext); monitor.start(kind) }
+                .onFailure { monitor.stop("Unable to start reading. Reconnect your watch.") }
+        }
+    }
+
+    fun startRecording(kind: DeviceKind, pairingCode: String) {
+        scope.launch(Dispatchers.Main) {
+            runCatching { SyncService.start(appContext); collector.start(kind, pairingCode) }
+                .onFailure { monitor.stop("Unable to start recording. Try again.") }
+        }
+    }
+
+    fun stopReading() { collector.stop(); monitor.stop() }
 
     private fun connection(kind: DeviceKind) = when (kind) {
         DeviceKind.WATCH -> watch
@@ -78,8 +106,19 @@ class SyncEngine(context: Context) {
     }
     fun reconnect(kind: DeviceKind) {
         devices.value.firstOrNull { it.kind == kind }?.let { connection(kind).requestConnect(it.deviceId) }
+        if (connection(kind).isReady) monitor.connected(kind)
     }
-    fun disconnect(kind: DeviceKind) = connection(kind).requestDisconnect()
+    fun disconnect(kind: DeviceKind) {
+        scope.launch {
+            if (monitor.state.value.kind == kind) {
+                collector.stop()
+                monitor.stop()
+                monitor.awaitStopped()
+                monitor.disconnected()
+            }
+            withContext(Dispatchers.Main) { connection(kind).requestDisconnect() }
+        }
+    }
     private fun remember(device: HeartDevice) {
         mutableDevices.update { current -> current.filterNot { it.kind == device.kind } + device }
         val rows = JSONArray()

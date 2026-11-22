@@ -34,12 +34,13 @@ class SyncService : Service() {
         _running.value = false
         val collector = (application as com.example.myapplication.SpikeApp).engine.collector
         if (collector.state.value.active) collector.stop()
+        (application as com.example.myapplication.SpikeApp).engine.monitor.let { if (it.state.value.active) it.stop() }
         super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_STOP -> { (application as com.example.myapplication.SpikeApp).engine.collector.stop();stopForegroundCompat(); stopSelf(); _running.value = false }
+            ACTION_STOP -> { (application as com.example.myapplication.SpikeApp).engine.let { engine -> engine.stopReading() }; stopForegroundCompat(); stopSelf(); _running.value = false }
             else -> { _running.value = startForegroundCompat() }
         }
         return START_NOT_STICKY
@@ -59,9 +60,9 @@ class SyncService : Service() {
             this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE,
         )
         val n: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(if((application as com.example.myapplication.SpikeApp).engine.collector.state.value.active) "HeaRt is recording" else "HeaRt is connected")
-            .setContentText("Keeping your wearable connected. Open HeaRt to manage collection.")
-            .addAction(0, "Stop recording", PendingIntent.getService(this, 1, Intent(this, SyncService::class.java).setAction(ACTION_STOP), PendingIntent.FLAG_IMMUTABLE))
+            .setContentTitle("HeaRt · heart rate")
+            .setContentText("Measurement active. Open HeaRt for reading and recording controls.")
+            .addAction(0, "Stop reading", PendingIntent.getService(this, 1, Intent(this, SyncService::class.java).setAction(ACTION_STOP), PendingIntent.FLAG_IMMUTABLE))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(open)
             .setOngoing(true)

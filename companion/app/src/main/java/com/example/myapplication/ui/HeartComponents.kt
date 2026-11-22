@@ -34,7 +34,7 @@ fun HeartButton(
     val n = HeartColors
     val background = if (!enabled && !loading) n.accent.copy(alpha = 0.4f) else n.accent
     val source = remember { MutableInteractionSource() }
-    val shape = RoundedCornerShape(10.dp)
+    val shape = RoundedCornerShape(14.dp)
     Box(
         modifier.height(48.dp).pressScale(source, 0.96f).clip(shape).background(background)
             .border(1.dp, Color.Transparent, shape)
@@ -47,7 +47,7 @@ fun HeartButton(
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             if (loading) CircularProgressIndicator(Modifier.size(14.dp), color = n.onAccent,
                 strokeWidth = 2.dp, trackColor = n.onAccent.copy(alpha = 0.2f))
-            Text(text, style = labelTextStyle(12.sp, 0.12f), color = n.onAccent,
+            Text(text, style = labelTextStyle(14.sp, 0f), color = n.onAccent,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
