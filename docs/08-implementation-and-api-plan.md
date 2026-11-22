@@ -1,6 +1,6 @@
 # Implementation plan, API contract and coding standard
 
-**Status:** Design only. Paths below are intended application routes, not existing files or working endpoints.
+**Status:** Implementation plan with the status/auth endpoints and initial migration now implemented. Remaining import/recording routes below are planned. See [authentication](15-authentication.md) for current behaviour and verification.
 
 ## Proposed module layout
 
@@ -69,7 +69,7 @@ Both table and chart requests use the same filter semantics described in SRS 3.4
 - Apply formatter/linter consistently. Document rationale for non-obvious decisions; avoid comments that repeat code.
 - Use synthetic test fixtures with deterministic times. Inject a clock for expiry/clock-skew tests.
 - Pin dependency versions, Python and Node versions after checking compatibility. Retain the frontend lockfile, check TypeScript and frontend lint/build output, and verify Astryx component accessibility in the actual UI. Record the actual PostgreSQL image tag/digest and Docker versions in the operating guide.
-- Feature branches and pull requests will provide actual history required by the course. Do not fabricate review, push or merge evidence. The repository is not yet created and Git hosting remains unspecified.
+- Feature branches and pull requests must provide actual history required by the course. Do not fabricate review, push or merge evidence. The repository is initialised; the initial API foundation is committed. Record later feature commits/PRs when actually created.
 - Each PR describes behaviour, requirements covered, validation and limitations. Record actual peer feedback and follow-up changes.
 
 ## First implementation increment

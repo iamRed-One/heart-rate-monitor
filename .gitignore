@@ -19,3 +19,15 @@ node_modules/
 dist/
 *.log
 docs/14-local-development.md
+
+*.tsbuildinfo
+playwright-report/
+test-results/
+
+# Android companion build output and machine-local SDK configuration
+.gradle/
+.kotlin/
+**/build/
+local.properties
+*.apk
+*.aab

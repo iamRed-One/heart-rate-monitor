@@ -1,6 +1,6 @@
 # Architecture and database design
 
-**Status:** Draft. No SQL schema script, migration or container has been executed.
+**Status:** Architecture draft with initial schema/auth implemented locally. Alembic revision `0001_initial` has been applied to the existing PostgreSQL container. The [schema export](../backend/migrations/schema.sql) and [authentication guide](15-authentication.md) describe this increment; frontend and CSV workflows remain planned.
 
 ## Architecture decision
 
@@ -144,6 +144,6 @@ Compute count/min/max/mean from the full matching rows. Avoid storing mutable su
 
 ## Supporting dependencies and sources
 
-Selected frontend: React with Astryx. Proposed supporting tools: Vite/TypeScript for frontend builds, SQLAlchemy with a PostgreSQL driver for persistence, Alembic for migrations, an established Argon2 password library, pytest/coverage for backend tests and Ruff for Python static checks. The global Astryx CLI is tooling; runtime components and compatible theme/style dependencies must still be installed and pinned in the frontend project. Exact compatible versions and APIs must be checked when coding begins. No project runtime dependencies have been installed.
+Selected frontend: React with Astryx; Vite/TypeScript remain proposed frontend tooling. The backend now uses SQLAlchemy Core with Psycopg, Alembic and argon2-cffi. unittest and HTTPX exercise the current increment; Ruff supplies static checks. Installed backend versions are pinned in `backend/uv.lock`. The global Astryx CLI is tooling; runtime components and compatible theme/style dependencies still need installation in the frontend project. The auth increment adds `auth_rate_limits` to the original five-table design for database-coordinated throttling.
 
 The frontend direction follows the official [React build-from-scratch guide](https://react.dev/learn/build-a-react-app-from-scratch), retrieved through Context7, and [Astryx documentation](https://github.com/meta/astryx). FastAPI's [static files](https://fastapi.tiangolo.com/tutorial/static-files/) and [file uploads](https://fastapi.tiangolo.com/tutorial/request-files/) documentation support static-asset delivery and multipart import. The storage design follows PostgreSQL's [date/time types](https://www.postgresql.org/docs/current/datatype-datetime.html) and [constraints](https://www.postgresql.org/docs/current/ddl-constraints.html). These support design choices; they are not evidence of implementation.

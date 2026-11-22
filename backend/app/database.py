@@ -1,4 +1,4 @@
-"""Bounded PostgreSQL connectivity probe; no application schema is created."""
+"""Bounded PostgreSQL connectivity and migration readiness probe."""
 
 import psycopg
 
@@ -16,5 +16,7 @@ def check_database(settings: DatabaseSettings) -> bool:
         connect_timeout=3,
         options="-c statement_timeout=3000 -c default_transaction_read_only=on",
     ) as connection:
-        row = connection.execute("SELECT 1").fetchone()
-    return row == (1,)
+        row = connection.execute(
+            "SELECT 1, (SELECT version_num FROM alembic_version)"
+        ).fetchone()
+    return row == (1, "0001_initial")

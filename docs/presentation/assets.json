@@ -1,0 +1,34 @@
+{
+  "android-home-dark.png": {
+    "width": 720,
+    "height": 1600
+  },
+  "android-home-light.png": {
+    "width": 720,
+    "height": 1600
+  },
+  "android-account-dark.png": {
+    "width": 720,
+    "height": 1600
+  },
+  "android-devices-dark.png": {
+    "width": 720,
+    "height": 1600
+  },
+  "web-dashboard.png": {
+    "width": 1440,
+    "height": 1426
+  },
+  "web-import.png": {
+    "width": 1440,
+    "height": 1000
+  },
+  "web-live.png": {
+    "width": 1440,
+    "height": 1000
+  },
+  "heart.png": {
+    "width": 1122,
+    "height": 1402
+  }
+}

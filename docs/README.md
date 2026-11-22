@@ -6,7 +6,7 @@
 
 These documents describe the proposed system. They are reviewable drafts, not evidence that implementation, testing, deployment or peer assessment has occurred. Requirements and numeric limits below are proposed design decisions unless explicitly attributed to the workbook. Actual calendar dates await the course start date.
 
-Implementation update: the status API, PostgreSQL connectivity probe, folder structure and no-pull database configuration now exist. See the [backend instructions](../backend/README.md) for direct run commands. The student reports successful local API/database connection. Earlier implementation plans remain targets rather than reports of completed features. The local development notes are intentionally excluded from Git.
+Implementation update: the initial schema migration, account/session authentication, status/readiness endpoints and no-pull PostgreSQL configuration now exist. Live health/readiness and migration consistency have been verified. See the [authentication guide](15-authentication.md) and [backend instructions](../backend/README.md). Earlier implementation plans remain targets for undelivered features. Local development notes are intentionally excluded from Git.
 
 | Document | Purpose | Status |
 | --- | --- | --- |
@@ -24,6 +24,9 @@ Implementation update: the status API, PostgreSQL connectivity probe, folder str
 | [11 User and technical manuals](11-user-and-technical-manuals.md) | Intended workflows and operating procedures | Pre-implementation draft |
 | [12 Evidence and report templates](12-evidence-and-report-templates.md) | Progress, review, defects, change request, metrics and final report | Templates only |
 | [13 Deliverables tracker](13-deliverables-tracker.md) | Exact weekly deliverables mapped to drafts and outstanding evidence | Tracking baseline |
+| [15 Authentication](15-authentication.md) | Implemented schema/auth API, run commands and test evidence | Implemented locally; frontend pending |
+| [16 CSV import](16-csv-import.md) | Preview/confirmation, basic recording history, sample and Postman instructions | Implemented locally; charts/frontend pending |
+| [17 Dashboard API](17-dashboard-api.md) | Readings, summaries, bounded charts, rename/delete and verification | Backend core verified; frontend pending |
 
 ## Decisions and open items
 
@@ -36,5 +39,9 @@ Implementation update: the status API, PostgreSQL connectivity probe, folder str
 - A schema script, CI configuration, source code, real Git history, test results and deployment evidence must be produced during implementation. Their planned shape is documented; they are not complete deliverables yet.
 
 ## Reading order
+
+The inspected Vigil export format and earlier live proof are documented in [18 Watch and companion findings](18-watch-companion-live.md). The independent HeaRt app and durable recording extension are documented in [19 HeaRt implementation and verification](19-heart-companion.md). These additions preserve the recorded-data coursework baseline.
+
+The current [free-hosting guide](20-demo-hosting.md) covers Render, Neon, Android server settings, the browser proxy and TablePlus. The [presentation package](presentation/README.md) contains the editable PowerPoint, PDF preview, exact workbook deliverables and copied app screenshots. Cloud hosting remains proposed until a deployment URL is verified.
 
 Read the proposal, SRS and planning documents first. Review import rules and scope before using the design as an implementation baseline. Compare the tracker against the verbatim workbook extraction when preparing submissions. Mermaid diagrams are text-based drafts; export rendered figures for a submission format if required.
