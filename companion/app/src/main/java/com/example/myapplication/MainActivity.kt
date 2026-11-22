@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
             isAppearanceLightNavigationBars = true
         }
         val preview = BuildConfig.DEBUG && intent.getBooleanExtra("preview_ui", false)
+        if (!preview) HeartApi.initialize(applicationContext)
         val screen = if (preview) intent.getStringExtra("screen").orEmpty() else "home"
         val preferences = getSharedPreferences("heart-appearance", MODE_PRIVATE)
         setContent {
@@ -88,6 +89,7 @@ class MainActivity : ComponentActivity() {
         val engine = remember { if (previewMode) null else (application as SpikeApp).engine }
         val scope = rememberCoroutineScope()
         val account by HeartApi.account.collectAsState()
+        val restoring by HeartApi.restoring.collectAsState()
         val collection = engine?.collector?.state?.collectAsState()?.value ?: CollectionState()
         var page by rememberSaveable { mutableIntStateOf(when (initialScreen) {
             "devices" -> 1; "history", "detail" -> 2; "files" -> 3; else -> 0
@@ -215,7 +217,8 @@ class MainActivity : ComponentActivity() {
                     HeartMark(); Spacer(Modifier.width(10.dp))
                     Text("HeaRt", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
                     ThemeToggle(darkTheme, onToggleTheme)
-                    if (account.id.isEmpty() || previewMode) IconButton(onClick = { showAccount = true }) {
+                    if (restoring && !previewMode) CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                    else if (account.id.isEmpty() || previewMode) IconButton(onClick = { showAccount = true }) {
                         Icon(Icons.Outlined.AccountCircle, "Account", tint = HeartColors.ink)
                     } else TextButton(onClick = {
                         engine?.collector?.stop()
@@ -482,11 +485,11 @@ class MainActivity : ComponentActivity() {
                             (parsed.scheme == "https" || (BuildConfig.DEBUG && parsed.host in listOf("127.0.0.1", "localhost")))) {
                             "Use an HTTPS server, or the local USB address in a debug build."
                         }
-                        HeartApi.server = server.trim().trimEnd('/')
+                        val address = server.trim().trimEnd('/')
                         if (register) {
-                            HeartApi.register(email, password); register = false; password = ""
+                            HeartApi.register(email, password, address); register = false; password = ""
                             notice = "Account created. Sign in to continue."
-                        } else { HeartApi.signIn(email, password); password = ""; onSignedIn() }
+                        } else { HeartApi.signIn(email, password, address); password = ""; onSignedIn() }
                     } catch (failure: Exception) { error = failure.friendly() }
                     finally { busy = false }
                 }

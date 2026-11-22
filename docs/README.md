@@ -44,4 +44,6 @@ The inspected Vigil export format and earlier live proof are documented in [18 W
 
 The current [hosting guide](20-demo-hosting.md) covers Render, Neon, Android server settings, the browser proxy and TablePlus, and records the verified public health/readiness responses. The [presentation package](presentation/README.md) presents the actual project requirements, UML, architecture, ERD, patterns and verification work from documents 01–13, followed by Android-only screenshots and demonstration steps.
 
+[Android release and saved login](21-android-release.md) records the 1.1 release, private signing-key locations, encrypted-session behavior and the checks actually completed before work stopped.
+
 Read the proposal, SRS and planning documents first. Review import rules and scope before using the design as an implementation baseline. Compare the tracker against the verbatim workbook extraction when preparing submissions. Mermaid diagrams are text-based drafts; export rendered figures for a submission format if required.

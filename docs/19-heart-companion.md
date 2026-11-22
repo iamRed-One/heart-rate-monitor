@@ -19,7 +19,7 @@ HeaRt is an independent Kotlin/Compose Android application in `companion/`, inst
 |---|---|
 | Backend suite | 44 passed, including integration tests against a separate `_test` database. |
 | Browser suite | 5 passed, including account import/view/rename/delete and live freshness/sidebar behavior. |
-| Android JVM suite | 11 tests passed on November 22: five CSV/standard Heart Rate decoding tests and six monitor tests, including passive connection, single-shot completion, cancellation and freshness. |
+| Android JVM suite | 18 tests passed on November 22: five CSV/standard Heart Rate decoding tests, six monitor tests, four session-encryption tests and three cookie-restoration tests. |
 | Android build | Offline debug APK assembled using installed tooling and existing SDK binaries. |
 | Astryx | 20 passed, no failures; two existing font-metadata warnings. |
 | Physical watch | Independent HeaRt connected to ET488#5535 through Veepoo on Samsung SM-A055F. |
@@ -32,8 +32,16 @@ The watch recording is real device evidence; the CSV/browser fixtures are synthe
 
 The acquisition and persistence evidence above predates the November 22 redesign and manual-reading update. The latest APK was built and installed on the Samsung phone; both themes, account screen, flat tabs and persistent appearance preference were checked. All 18 sampled light/dark text-contrast pairs met 4.5:1. ET488 reconnection did not complete during that update, so physical sensor release after the new manual read still needs confirmation. Backend and browser suites were not rerun for that UI pass; their results above are historical.
 
+### Hosted account verification — 22 November 2026
+
+The Android default API address was changed to `https://heart-rate-monitor-q6mx.onrender.com`, then the debug APK was rebuilt and installed without clearing app storage. All 11 Android JVM tests passed. A fresh demo account was registered through the Samsung phone UI, signed in successfully, and loaded its authenticated empty History screen from the hosted service. The phone was left signed in; test credentials are retained only in ignored local files.
+
+Hosted API checks verified: invalid registration 422; duplicate registration 409; incorrect password 401; valid login 200; Secure/HttpOnly/SameSite=Lax session cookie; authenticated identity 200; owned recordings 200; missing-CSRF logout 403 with the session still valid; valid logout 204; subsequent identity 401; and foreign-origin login 403. The API logout test used a separate cookie jar and did not end the phone's session. These are focused account/session smoke checks, not a rerun of all 44 backend tests or a hosted acquisition/import test.
+
 ## Cleanup and limits
 
 Removed 52 unrelated copied source files, including clinic/profile/insight UI, reminders, old Room schema, clinic uploads and temporary showcase screens, plus unused workers/resources/tests. Vigil's four temporary source modifications and two added showcase source files were removed after the independent acquisition test. Its unrelated local files and changes were preserved, and its installed data was not cleared.
 
-Live control currently runs in one API process. Active persistent sessions renew a 30-minute inactivity lease; a server/process restart ends the control connection without deleting saved readings. Native cookies and upload tokens remain in memory, so a process restart requires sign-in and a new recording. Unsent local samples remain available for CSV recovery. This version is not a clinical monitor and does not promise uninterrupted capture through Android force-stop or firmware/sensor failures.
+Live control currently runs in one API process. Active persistent sessions renew a 30-minute inactivity lease; a server/process restart ends the control connection without deleting saved readings. The release stores the account cookie encrypted with Android Keystore and validates it on launch. Upload tokens remain memory-only, so restarting does not automatically resume an active recording. Unsent local samples remain available for CSV recovery. This version is not a clinical monitor and does not promise uninterrupted capture through Android force-stop or firmware/sensor failures.
+
+The signed 1.1 release passed release lint, installed without uninstalling the debug app, was confirmed non-debuggable, and restored its authenticated account after both the upgrade and a separate force-stop/relaunch. The follow-up History check expected an empty list and did not match the observed UI, so that check is inconclusive; the subsequent release sign-out/relaunch check was not executed. Work stopped at the student's request. See [release details](21-android-release.md).

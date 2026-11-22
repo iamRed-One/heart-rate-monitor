@@ -21,7 +21,7 @@ cd companion
 adb install -r -t app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Use `http://127.0.0.1:8000` in the debug app. USB forwards API traffic; Bluetooth connects the wearable. Release builds require HTTPS. Set your own Android SDK location in ignored `local.properties`; do not commit machine paths. Dependencies and vendor SDKs reuse the local Vigil setup. Vendor binaries remain subject to their vendors' licenses.
+The app defaults to `https://heart-rate-monitor-q6mx.onrender.com`. For local development, enter `http://127.0.0.1:8000` under Account → Server settings in a debug build. USB forwards local API traffic; Bluetooth connects the wearable. Release builds require HTTPS. Set your own Android SDK location in ignored `local.properties`; do not commit machine paths. Dependencies and vendor SDKs reuse the local Vigil setup. Vendor binaries remain subject to their vendors' licenses.
 
 Connect the device, then press Read heart rate on Home for one measurement. The sensor stops after a result, timeout or Stop. To save repeated readings, sign in and choose Save a recording. The phone can create its own recording. Alternatively, start recording on the web and enter that one-use pairing code on the phone. Open the web Live page to follow collection; Stop works from either interface.
 
@@ -35,7 +35,7 @@ Each new sample is saved locally before upload. The API acknowledges persistent 
 
 Collection repeats device measurement cycles until Stop, rather than imposing the former two-minute showcase limit. Brief connection/network interruptions retry. Android foreground-service restrictions, force-stop, sensor contact, watch firmware and process termination can still interrupt collection. This is heart rate, not ECG or clinical monitoring.
 
-Login cookies and upload tokens stay in memory. A process/API restart requires a new live connection; already uploaded readings remain saved. Unsent samples survive in the phone's local database and can be recovered by CSV export after signing back into their account. This version does not resume upload tokens across process restarts. Local export includes the signed-in account's captured samples, up to 100,000 rows; server imports accept 10,000 rows per file.
+The login cookie is encrypted with Android Keystore and restored only after the API validates it on launch. Passwords are not saved. Sign-out, cookie expiry and authentication rejection clear the stored session. Upload tokens remain in memory, so a process/API restart still requires a new live recording connection; already uploaded readings remain saved. Unsent samples survive in the phone's local database and can be recovered by CSV export under their account. Local export includes the signed-in account's captured samples, up to 100,000 rows; server imports accept 10,000 rows per file.
 
 The native converter accepts `timestamp,heart_rate` and compatible full Vigil heart-rate exports (`ts_utc,value,metric,unit,device_id`). It rejects mixed devices and non-heart-rate values. Keep original full exports for their extra provenance; canonical uploads preserve timestamp/BPM only.
 
@@ -52,3 +52,7 @@ The crimson native redesign separates passive connection, one-shot Read heart ra
 ## Appearance
 
 The app follows Android light/dark mode initially. Use the sun/moon button in the app header or account screen to switch; your choice is remembered across app restarts. Both themes share a compact flat bottom tab bar.
+
+## Release build
+
+The signed 1.1 release was installed in place on the Samsung phone, retaining app storage. It is not debuggable and restores the saved account after a full process restart. See [release signing and validation](../docs/21-android-release.md). Future updates must use the matching release key/lineage; an old debug APK cannot simply replace this installed release.
