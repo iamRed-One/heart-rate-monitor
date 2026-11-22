@@ -1,6 +1,6 @@
 # Free hosting for the HeaRt demonstration
 
-Checked against provider documentation on 22 November 2026. This is a deployment guide, not evidence of a completed cloud deployment. Keep local Docker/PostgreSQL intact as the fallback.
+Checked against provider documentation on 22 November 2026. The deployed API at https://heart-rate-monitor-q6mx.onrender.com returned `{"status":"OK"}` from `/health` and `{"status":"OK","database":"connected"}` from `/ready` on that date. This verifies process/database readiness, not a full hosted account/import/watch acceptance run. Keep local Docker/PostgreSQL intact as the fallback.
 
 ## Recommendation and alternatives
 
@@ -26,7 +26,7 @@ This is a fresh cloud database. Alembic creates its schema; local accounts/readi
 
 ## 2. Create the Render web service
 
-Connect the GitHub repository and select the branch containing the committed changes. A local commit must be pushed before Render can see it; this session did not push automatically. Choose **Python**, **Free**, and root directory **backend**. Render runs build/start commands relative to that directory. See [FastAPI deployment](https://render.com/docs/deploy-fastapi), [monorepos](https://render.com/docs/monorepo-support), and [build commands](https://render.com/docs/deploys).
+Connect the GitHub repository and select **main**: the student merged the former `feature/csv-import` branch and deleted it on GitHub. A local commit must be pushed before Render can see it. Choose **Python**, **Free**, and root directory **backend**. Render runs build/start commands relative to that directory. See [FastAPI deployment](https://render.com/docs/deploy-fastapi), [monorepos](https://render.com/docs/monorepo-support), and [build commands](https://render.com/docs/deploys).
 
 Build command:
 
@@ -90,4 +90,4 @@ Create another PostgreSQL connection named **HeaRt — Neon demo**. Use the same
 6. Verify that refresh retains uploaded readings. Do not restart/redeploy the API during capture: active control sessions end on process restart, although uploaded rows remain.
 7. Warm `/ready` shortly before your talk and rehearse the complete path. Keep a labelled recorded/synthetic CSV and the local Docker setup ready if Bluetooth or free hosting fails. Never describe a CSV replay as a live watch measurement.
 
-Cloud deployment, database credentials and a public URL remain to be configured in the provider accounts. No hosted service was created or charged by preparing this guide.
+The student created the Render service and the existing Neon project. Neon CLI sign-in, Codex plugin installation and MCP OAuth authentication were completed; an encrypted direct database connection was verified. The private paste-ready Render variables are in ignored `.env.render`, with the actual Render URL in `ALLOWED_ORIGINS`. Credentials are not committed. The hosted `/ready` response verifies that schema/database readiness is now satisfied; registration/import/recording/hardware smoke tests remain separate checks. Restart Codex to load the newly installed Neon skills and MCP tools into a fresh agent session.

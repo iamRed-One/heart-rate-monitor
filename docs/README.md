@@ -42,6 +42,6 @@ Implementation update: the initial schema migration, account/session authenticat
 
 The inspected Vigil export format and earlier live proof are documented in [18 Watch and companion findings](18-watch-companion-live.md). The independent HeaRt app and durable recording extension are documented in [19 HeaRt implementation and verification](19-heart-companion.md). These additions preserve the recorded-data coursework baseline.
 
-The current [free-hosting guide](20-demo-hosting.md) covers Render, Neon, Android server settings, the browser proxy and TablePlus. The [presentation package](presentation/README.md) contains the editable PowerPoint, PDF preview, exact workbook deliverables and copied app screenshots. Cloud hosting remains proposed until a deployment URL is verified.
+The current [hosting guide](20-demo-hosting.md) covers Render, Neon, Android server settings, the browser proxy and TablePlus, and records the verified public health/readiness responses. The [presentation package](presentation/README.md) presents the actual project requirements, UML, architecture, ERD, patterns and verification work from documents 01–13, followed by Android-only screenshots and demonstration steps.
 
 Read the proposal, SRS and planning documents first. Review import rules and scope before using the design as an implementation baseline. Compare the tracker against the verbatim workbook extraction when preparing submissions. Mermaid diagrams are text-based drafts; export rendered figures for a submission format if required.
